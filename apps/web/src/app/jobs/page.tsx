@@ -40,7 +40,7 @@ export default function JobsPage() {
 
     fetch(`/api/v1/jobs?${params.toString()}`)
       .then((res) => (res.ok ? res.json() : []))
-      .then((data) => setJobs(data))
+      .then((data) => setJobs(Array.isArray(data) ? data : data.jobs || []))
       .catch(console.error)
       .finally(() => setLoading(false));
   };

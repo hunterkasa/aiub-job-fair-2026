@@ -40,13 +40,19 @@ interface CompanyProfile {
 
 interface JobPost {
   id: string;
-  title: string;
-  division: string;
-  jobType: string;
-  workPlace: string;
+  title?: string;
+  positionName?: string;
+  division?: string;
+  location?: string;
+  jobType?: string;
+  employmentStatus?: string;
+  workPlace?: string;
+  workplace?: string;
   vacancies?: number;
-  applicationDeadline: string;
-  shortDescription: string;
+  applicationDeadline?: string;
+  deadlineUtc?: string;
+  shortDescription?: string;
+  responsibilities?: string;
   status: "DRAFT" | "PUBLISHED" | "CLOSED";
   question1?: string;
   question2?: string;
@@ -410,26 +416,26 @@ export default function EmployerDashboardPage() {
                         {job.status}
                       </span>
                       <span className="text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">
-                        {job.jobType.replace("_", " ")}
+                        {(job.jobType || job.employmentStatus || "FULL_TIME").replace(/_/g, " ")}
                       </span>
                     </div>
 
                     <h3 className="font-bold text-slate-900 text-base leading-snug">
-                      {job.title}
+                      {job.title || job.positionName}
                     </h3>
 
                     <p className="text-xs text-slate-600 mt-2 line-clamp-2">
-                      {job.shortDescription}
+                      {job.shortDescription || job.responsibilities || "No description provided."}
                     </p>
 
                     <div className="mt-4 space-y-1 text-xs text-slate-500">
                       <div className="flex items-center space-x-1.5">
                         <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                        <span>{job.division} ({job.workPlace})</span>
+                        <span>{job.division || job.location || "Dhaka"} ({job.workPlace || job.workplace || "Office"})</span>
                       </div>
                       <div className="flex items-center space-x-1.5">
                         <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                        <span>Deadline: {new Date(job.applicationDeadline).toLocaleDateString()}</span>
+                        <span>Deadline: {job.applicationDeadline || job.deadlineUtc ? new Date((job.applicationDeadline || job.deadlineUtc)!).toLocaleDateString() : "Dec 5, 2026"}</span>
                       </div>
                     </div>
                   </div>

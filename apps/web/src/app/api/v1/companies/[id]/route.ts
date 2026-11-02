@@ -19,5 +19,18 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ message: "Company not found or pending approval" }, { status: 404 });
   }
 
-  return NextResponse.json(company);
+  const normalized = {
+    ...company,
+    jobPosts: (company.jobPosts || []).map((j) => ({
+      ...j,
+      title: j.positionName,
+      division: j.location,
+      jobType: j.employmentStatus,
+      workPlace: j.workplace,
+      shortDescription: j.responsibilities || j.skillsAndExpertise || "",
+      applicationDeadline: j.deadlineUtc ? j.deadlineUtc.toISOString() : "2026-12-05",
+    })),
+  };
+
+  return NextResponse.json(normalized);
 }

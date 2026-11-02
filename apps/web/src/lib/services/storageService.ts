@@ -70,26 +70,36 @@ export function validateMagicBytes(buffer: Buffer, expectedType: "pdf" | "image"
 }
 
 export async function saveFileLocally(buffer: Buffer, originalName: string): Promise<string> {
-  if (!fs.existsSync(/*turbopackIgnore: true*/ UPLOAD_DIR)) {
-    fs.mkdirSync(/*turbopackIgnore: true*/ UPLOAD_DIR, { recursive: true });
-  }
-
   const ext = path.extname(originalName).toLowerCase();
   const storageKey = `${crypto.randomUUID()}${ext}`;
-  const filePath = path.join(/*turbopackIgnore: true*/ UPLOAD_DIR, storageKey);
 
-  await fs.promises.writeFile(/*turbopackIgnore: true*/ filePath, buffer);
+  try {
+    if (!fs.existsSync(/*turbopackIgnore: true*/ UPLOAD_DIR)) {
+      fs.mkdirSync(/*turbopackIgnore: true*/ UPLOAD_DIR, { recursive: true });
+    }
+    const filePath = path.join(/*turbopackIgnore: true*/ UPLOAD_DIR, storageKey);
+    await fs.promises.writeFile(/*turbopackIgnore: true*/ filePath, buffer);
+  } catch (err) {
+    // In serverless environments (e.g. Vercel), local filesystem is read-only.
+    // The binary data is saved directly in PostgreSQL bytea.
+    console.warn("[Storage] Local disk write skipped or failed (safe on serverless):", err);
+  }
+
   return storageKey;
 }
 
 export async function getFileBuffer(storageKey: string): Promise<{ buffer: Buffer; fileName: string } | null> {
-  const safeName = path.basename(storageKey);
-  const filePath = path.join(/*turbopackIgnore: true*/ UPLOAD_DIR, safeName);
+  try {
+    const safeName = path.basename(storageKey);
+    const filePath = path.join(/*turbopackIgnore: true*/ UPLOAD_DIR, safeName);
 
-  if (!fs.existsSync(/*turbopackIgnore: true*/ filePath)) {
+    if (!fs.existsSync(/*turbopackIgnore: true*/ filePath)) {
+      return null;
+    }
+
+    const buffer = await fs.promises.readFile(/*turbopackIgnore: true*/ filePath);
+    return { buffer, fileName: safeName };
+  } catch {
     return null;
   }
-
-  const buffer = await fs.promises.readFile(/*turbopackIgnore: true*/ filePath);
-  return { buffer, fileName: safeName };
 }

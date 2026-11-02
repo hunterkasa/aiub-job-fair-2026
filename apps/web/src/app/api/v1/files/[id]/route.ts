@@ -58,16 +58,24 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     }
   }
 
+  let fileBuffer: Buffer | null = null;
   const fileData = await getFileBuffer(asset.storageKey);
-  if (!fileData) {
-    return NextResponse.json({ message: "File on storage missing" }, { status: 404 });
+
+  if (fileData?.buffer) {
+    fileBuffer = fileData.buffer;
+  } else if (asset.fileData) {
+    fileBuffer = Buffer.from(asset.fileData);
+  }
+
+  if (!fileBuffer) {
+    return NextResponse.json({ message: "File binary data missing from storage" }, { status: 404 });
   }
 
   const headers = new Headers();
   headers.set("Content-Type", asset.contentType);
   headers.set("Content-Disposition", `inline; filename="${asset.originalName}"`);
 
-  return new NextResponse(fileData.buffer as any, {
+  return new NextResponse(fileBuffer as any, {
     status: 200,
     headers,
   });

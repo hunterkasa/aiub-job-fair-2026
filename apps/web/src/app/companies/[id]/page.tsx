@@ -18,14 +18,20 @@ import {
 
 interface JobPost {
   id: string;
-  title: string;
-  division: string;
-  jobType: string;
-  workPlace: string;
+  title?: string;
+  positionName?: string;
+  division?: string;
+  location?: string;
+  jobType?: string;
+  employmentStatus?: string;
+  workPlace?: string;
+  workplace?: string;
   vacancies?: number;
-  applicationDeadline: string;
-  shortDescription: string;
-  createdAt: string;
+  applicationDeadline?: string;
+  deadlineUtc?: string;
+  shortDescription?: string;
+  responsibilities?: string;
+  createdAt?: string;
 }
 
 interface CompanyDetail {
@@ -194,26 +200,30 @@ export default function CompanyDetailPage() {
                   <div className="flex items-start justify-between gap-2">
                     <h3 className="font-bold text-slate-900 text-base">
                       <Link href={`/jobs/${job.id}`} className="hover:text-blue-600">
-                        {job.title}
+                        {job.title || job.positionName}
                       </Link>
                     </h3>
                     <span className="text-xs font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-700 shrink-0">
-                      {job.jobType.replace("_", " ")}
+                      {(job.jobType || job.employmentStatus || "FULL_TIME").replace(/_/g, " ")}
                     </span>
                   </div>
 
                   <p className="text-xs text-slate-600 mt-2 line-clamp-2">
-                    {job.shortDescription}
+                    {job.shortDescription || job.responsibilities || "View details for full requirements."}
                   </p>
 
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 text-xs text-slate-500">
                     <span className="flex items-center space-x-1">
                       <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                      <span>{job.division}</span>
+                      <span>{job.division || job.location || "Dhaka"}</span>
                     </span>
                     <span className="flex items-center space-x-1">
                       <Clock className="w-3.5 h-3.5 text-slate-400" />
-                      <span>Due {new Date(job.applicationDeadline).toLocaleDateString()}</span>
+                      <span>
+                        Deadline: {job.applicationDeadline || job.deadlineUtc
+                          ? new Date((job.applicationDeadline || job.deadlineUtc)!).toLocaleDateString()
+                          : "Dec 5, 2026"}
+                      </span>
                     </span>
                     {job.vacancies && (
                       <span className="flex items-center space-x-1">

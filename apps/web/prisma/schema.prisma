@@ -305,6 +305,7 @@ model FileAsset {
   sizeBytes    BigInt
   kind         FileKind
   ownerUserId  String
+  fileData     Bytes?
   createdAt    DateTime @default(now())
 }
 

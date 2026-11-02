@@ -50,6 +50,7 @@ export async function POST(req: NextRequest) {
         sizeBytes: BigInt(buffer.length),
         kind: kind as any,
         ownerUserId: user.userId,
+        fileData: buffer,
       },
     });
 
