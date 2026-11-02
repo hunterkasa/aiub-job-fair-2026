@@ -1,0 +1,62 @@
+services:
+  caddy:
+    image: caddy:2.8-alpine
+    container_name: aiub_caddy_prod
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+      - api
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: aiub_postgres_prod
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    image: ${API_IMAGE:-ghcr.io/aiub-club/aiub-jobfair-api:latest}
+    container_name: aiub_api_prod
+    restart: always
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Database__Provider: ${DATABASE_PROVIDER:-PostgreSql}
+      ConnectionStrings__Default: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      Cors__AllowedOrigins__0: "https://${DOMAIN}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    image: ${WEB_IMAGE:-ghcr.io/aiub-club/aiub-jobfair-web:latest}
+    container_name: aiub_web_prod
+    restart: always
+    environment:
+      NODE_ENV: production
+      API_INTERNAL_URL: http://api:5000
+    depends_on:
+      - api
+
+volumes:
+  postgres_prod_data:
+  caddy_data:
+  caddy_config:
