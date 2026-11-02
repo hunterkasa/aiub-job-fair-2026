@@ -47,17 +47,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 px-4 sm:px-6">
+    <div className="max-w-md mx-auto py-12 sm:py-16 px-4 w-full">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center mb-6">
-          <Link href="/" className="inline-flex items-center gap-2 text-blue-900 font-extrabold text-2xl">
-            <span className="h-10 w-10 rounded-xl bg-blue-900 text-white flex items-center justify-center text-xl shadow-md">
-              A
-            </span>
-            <span>AIUB Job Fair 2026</span>
-          </Link>
-          <h2 className="mt-4 text-2xl font-bold text-slate-900 tracking-tight">Sign in to your account</h2>
-          <p className="text-xs text-slate-600 mt-1">
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Sign In to Your Account</h1>
+          <p className="text-xs text-slate-500 mt-1">
             Access student profiles, employer dashboards, or admin console
           </p>
         </div>

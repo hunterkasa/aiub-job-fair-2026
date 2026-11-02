@@ -199,22 +199,24 @@ export default function Navbar() {
                 </Link>
 
                 <div className="relative group">
-                  <button className="bg-blue-700 hover:bg-blue-800 text-white px-3.5 py-2 rounded-lg text-sm font-medium shadow-sm transition-all flex items-center space-x-1">
+                  <button className="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-2 rounded-lg text-sm font-semibold shadow-sm transition-all flex items-center space-x-1">
                     <span>Register</span>
                   </button>
-                  <div className="absolute right-0 mt-1 w-48 bg-white border border-slate-200 rounded-lg shadow-lg py-1.5 hidden group-hover:block z-50">
-                    <Link
-                      href="/register/student"
-                      className="block px-4 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700"
-                    >
-                      🎓 AIUB Student / Alumni
-                    </Link>
-                    <Link
-                      href="/register/employer"
-                      className="block px-4 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700"
-                    >
-                      🏢 Company / Employer
-                    </Link>
+                  <div className="absolute right-0 top-full pt-1.5 w-52 hidden group-hover:block z-50">
+                    <div className="bg-white border border-slate-200 rounded-xl shadow-xl py-1.5 overflow-hidden">
+                      <Link
+                        href="/register/student"
+                        className="block px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                      >
+                        🎓 AIUB Student / Alumni
+                      </Link>
+                      <Link
+                        href="/register/employer"
+                        className="block px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                      >
+                        🏢 Company / Employer Stall
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>

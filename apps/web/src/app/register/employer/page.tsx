@@ -68,8 +68,8 @@ export default function EmployerRegisterPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-slate-50 py-16 px-4 sm:px-6">
-        <div className="mx-auto max-w-md bg-white rounded-2xl shadow-sm border border-slate-200 p-8 text-center">
+      <div className="max-w-md mx-auto py-16 px-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 text-center">
           <div className="h-14 w-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4">
             <CheckCircle2 className="h-8 w-8" />
           </div>
@@ -91,7 +91,7 @@ export default function EmployerRegisterPage() {
           <div className="flex flex-col gap-3">
             <Link
               href="/employer/dashboard"
-              className="w-full rounded-xl bg-blue-900 px-4 py-3 text-sm font-bold text-white hover:bg-blue-800 transition-all text-center"
+              className="w-full rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-3 text-sm font-bold text-white transition-all text-center"
             >
               Go to Employer Dashboard
             </Link>
@@ -108,13 +108,9 @@ export default function EmployerRegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6">
-      <div className="mx-auto max-w-xl">
+    <div className="max-w-xl mx-auto py-10 px-4 sm:px-6 w-full">
+      <div>
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-blue-900 font-extrabold text-xl mb-2">
-            <span className="h-9 w-9 rounded-xl bg-blue-900 text-white flex items-center justify-center text-lg">A</span>
-            <span>AIUB Job Fair 2026</span>
-          </Link>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Employer Registration</h1>
           <p className="text-sm text-slate-600 mt-1">
             Partner with AIUB to hire top graduates and interns

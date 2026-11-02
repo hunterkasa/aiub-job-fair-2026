@@ -252,7 +252,7 @@ export default function AdminDashboardPage() {
           <a
             href="/api/v1/admin/students/export-csv"
             download="aiub_students.csv"
-            className="inline-flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 shadow-xs transition-colors"
+            className="inline-flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 shadow-sm transition-colors"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Students CSV</span>
@@ -261,7 +261,7 @@ export default function AdminDashboardPage() {
           <a
             href="/api/v1/admin/applications/export-csv"
             download="aiub_applications.csv"
-            className="inline-flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 shadow-xs transition-colors"
+            className="inline-flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm transition-colors"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Applications CSV</span>
@@ -322,7 +322,7 @@ export default function AdminDashboardPage() {
       {activeTab === "overview" && stats && (
         <div className="mt-8 space-y-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
               <div className="flex items-center justify-between text-slate-500 mb-2">
                 <span className="text-xs font-semibold">Total Students</span>
                 <Users className="w-4 h-4 text-blue-600" />
@@ -333,7 +333,7 @@ export default function AdminDashboardPage() {
               <div className="text-[11px] text-slate-500 mt-1">Verified @aiub.edu registrations</div>
             </div>
 
-            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
               <div className="flex items-center justify-between text-slate-500 mb-2">
                 <span className="text-xs font-semibold">Participating Companies</span>
                 <Building2 className="w-4 h-4 text-emerald-600" />
@@ -346,7 +346,7 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
               <div className="flex items-center justify-between text-slate-500 mb-2">
                 <span className="text-xs font-semibold">Published Jobs</span>
                 <Briefcase className="w-4 h-4 text-indigo-600" />
@@ -357,7 +357,7 @@ export default function AdminDashboardPage() {
               <div className="text-[11px] text-slate-500 mt-1">Vacancies across 8 divisions</div>
             </div>
 
-            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
               <div className="flex items-center justify-between text-slate-500 mb-2">
                 <span className="text-xs font-semibold">Total Applications</span>
                 <ClipboardList className="w-4 h-4 text-purple-600" />
@@ -389,7 +389,7 @@ export default function AdminDashboardPage() {
                     setEmployerFilter("PENDING");
                     setActiveTab("employers");
                   }}
-                  className="px-3.5 py-1.5 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors shadow-xs"
+                  className="px-3.5 py-1.5 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors shadow-sm"
                 >
                   Review Pending
                 </button>
@@ -448,7 +448,7 @@ export default function AdminDashboardPage() {
               {filteredEmployers.map((emp) => (
                 <div
                   key={emp.id}
-                  className="bg-white rounded-xl border border-slate-200 p-5 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+                  className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
                 >
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-1">
@@ -506,7 +506,7 @@ export default function AdminDashboardPage() {
                       <button
                         onClick={() => handleApproveEmployer(emp.id)}
                         disabled={actionLoading === emp.id}
-                        className="inline-flex items-center space-x-1 px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors disabled:opacity-50"
+                        className="inline-flex items-center space-x-1 px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors disabled:opacity-50"
                       >
                         <CheckCircle className="w-3.5 h-3.5" />
                         <span>Approve</span>
@@ -557,7 +557,7 @@ export default function AdminDashboardPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
+          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead className="bg-slate-50 text-slate-600 font-semibold uppercase tracking-wider border-b border-slate-200">
@@ -601,7 +601,7 @@ export default function AdminDashboardPage() {
 
       {/* Tab: Exports */}
       {activeTab === "exports" && (
-        <div className="mt-8 max-w-2xl bg-white rounded-xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6">
+        <div className="mt-8 max-w-2xl bg-white rounded-xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
           <div>
             <h2 className="text-lg font-bold text-slate-900">Data Export Center</h2>
             <p className="text-xs text-slate-500 mt-1">
@@ -649,7 +649,7 @@ export default function AdminDashboardPage() {
 
       {/* Tab: Settings */}
       {activeTab === "settings" && (
-        <div className="mt-8 max-w-2xl bg-white rounded-xl border border-slate-200 p-6 sm:p-8 shadow-xs">
+        <div className="mt-8 max-w-2xl bg-white rounded-xl border border-slate-200 p-6 sm:p-8 shadow-sm">
           <h2 className="text-lg font-bold text-slate-900 mb-1">Event Deadlines & Configuration</h2>
           <p className="text-xs text-slate-500 mb-6">
             Modify core cutoff deadlines for AIUB Job Fair 2026.
@@ -688,7 +688,7 @@ export default function AdminDashboardPage() {
 
       {/* Rejection Modal */}
       {rejectingCompanyId && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl">
             <h3 className="text-base font-bold text-slate-900 mb-1">Reject Employer Application</h3>
             <p className="text-xs text-slate-500 mb-4">

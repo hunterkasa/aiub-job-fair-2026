@@ -37,7 +37,7 @@ export default function InfoPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
           <div className="flex items-center space-x-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
             <Activity className="w-4 h-4 text-emerald-600" />
             <span>Liveness Status</span>
@@ -49,7 +49,7 @@ export default function InfoPage() {
           <div className="text-xs text-slate-500 mt-2">HTTP /api/v1/health/live</div>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
           <div className="flex items-center space-x-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
             <Database className="w-4 h-4 text-blue-600" />
             <span>Readiness & Database</span>
@@ -61,7 +61,7 @@ export default function InfoPage() {
           <div className="text-xs text-slate-500 mt-2">Prisma ORM • PostgreSQL</div>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
           <div className="flex items-center space-x-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
             <Cpu className="w-4 h-4 text-purple-600" />
             <span>Architecture</span>
@@ -71,7 +71,7 @@ export default function InfoPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-4">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
         <h2 className="text-base font-bold text-slate-900">Key Architectural Safeguards</h2>
         <ul className="space-y-3 text-xs sm:text-sm text-slate-600">
           <li className="flex items-start space-x-2">

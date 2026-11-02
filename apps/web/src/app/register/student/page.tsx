@@ -94,13 +94,9 @@ export default function StudentRegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6">
-      <div className="mx-auto max-w-xl">
+    <div className="max-w-xl mx-auto py-10 px-4 sm:px-6 w-full">
+      <div>
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-blue-900 font-extrabold text-xl mb-2">
-            <span className="h-9 w-9 rounded-xl bg-blue-900 text-white flex items-center justify-center text-lg">A</span>
-            <span>AIUB Job Fair 2026</span>
-          </Link>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Student Registration</h1>
           <p className="text-sm text-slate-600 mt-1">
             Register using your official university email (<code>@student.aiub.edu</code>)

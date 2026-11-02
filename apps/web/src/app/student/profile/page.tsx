@@ -235,41 +235,37 @@ export default function StudentProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-16">
-      {/* Top Navbar */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
-        <div className="mx-auto max-w-5xl px-4 py-3 sm:px-6 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-blue-900 font-extrabold text-base">
-            <span className="h-8 w-8 rounded-lg bg-blue-900 text-white flex items-center justify-center text-sm">A</span>
-            <span className="hidden sm:inline">AIUB Job Fair 2026</span>
-          </Link>
-
-          <div className="flex items-center gap-3">
-            <Link
-              href="/jobs"
-              className="rounded-lg bg-blue-50 text-blue-900 px-3 py-1.5 text-xs font-semibold hover:bg-blue-100"
-            >
-              Browse Jobs
-            </Link>
-            <Link
-              href="/student/applications"
-              className="text-xs text-slate-600 hover:text-slate-900 font-medium"
-            >
-              My Applications
-            </Link>
-            <button
-              onClick={() => {
-                fetch("/api/v1/auth/logout", { method: "POST" }).then(() => router.push("/login"));
-              }}
-              className="text-xs text-red-600 hover:underline font-medium"
-            >
-              Sign Out
-            </button>
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
+      {/* Top Banner & Quick Navigation */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+        <div>
+          <div className="flex items-center space-x-2 text-blue-600 font-semibold text-xs uppercase tracking-wider mb-1">
+            <User className="w-4 h-4" />
+            <span>Student & Alumni Profile Builder</span>
           </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            {profile?.fullName || "Student Profile"}
+          </h1>
+          <p className="text-xs text-slate-500 mt-0.5">
+            AIUB ID: <strong className="font-mono text-slate-800">{profile?.aiubId}</strong> • Complete all sections to unlock job applications
+          </p>
         </div>
-      </header>
 
-      <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 space-y-8">
+        <div className="flex items-center space-x-2">
+          <Link
+            href="/jobs"
+            className="rounded-lg bg-blue-50 text-blue-700 px-3.5 py-2 text-xs font-semibold hover:bg-blue-100 transition-colors"
+          >
+            Browse Open Jobs
+          </Link>
+          <Link
+            href="/student/assessment"
+            className="rounded-lg bg-indigo-50 text-indigo-700 px-3.5 py-2 text-xs font-semibold hover:bg-indigo-100 transition-colors"
+          >
+            Take Assessment
+          </Link>
+        </div>
+      </div>
         {/* Profile Completeness Card (Section 7 & 9) */}
         <section className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
@@ -652,7 +648,6 @@ export default function StudentProfilePage() {
             </div>
           )}
         </section>
-      </main>
 
       {/* Modal: Add Education */}
       {showEduModal && (

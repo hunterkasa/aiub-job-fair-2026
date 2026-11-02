@@ -735,7 +735,7 @@ export default function EmployerDashboardPage() {
 
       {/* Modal: Create Job Post */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-xl my-8">
             <h3 className="text-lg font-bold text-slate-900 mb-1">Post a New Vacancy</h3>
             <p className="text-xs text-slate-500 mb-4">
@@ -901,7 +901,7 @@ export default function EmployerDashboardPage() {
 
       {/* Modal: Full Psychometric & Student Modal */}
       {selectedApplicant && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl">
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <div>

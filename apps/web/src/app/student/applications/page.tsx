@@ -17,8 +17,8 @@ export default function StudentApplicationsPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6">
-      <div className="mx-auto max-w-4xl">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div>
         <div className="mb-6">
           <Link
             href="/student/profile"

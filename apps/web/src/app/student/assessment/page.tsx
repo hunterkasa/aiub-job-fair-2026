@@ -85,16 +85,17 @@ export default function StudentAssessmentPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-900" />
+      <div className="max-w-2xl mx-auto py-20 text-center">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-2" />
+        <p className="text-xs text-slate-500">Loading psychometric questionnaire...</p>
       </div>
     );
   }
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-slate-50 py-16 px-4 sm:px-6">
-        <div className="mx-auto max-w-md bg-white rounded-2xl shadow-sm border border-slate-200 p-8 text-center">
+      <div className="max-w-md mx-auto py-16 px-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 text-center">
           <div className="h-14 w-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4">
             <CheckCircle2 className="h-8 w-8" />
           </div>
@@ -112,7 +113,7 @@ export default function StudentAssessmentPage() {
 
           <Link
             href="/student/profile"
-            className="w-full inline-flex items-center justify-center rounded-xl bg-blue-900 px-4 py-3 text-sm font-bold text-white hover:bg-blue-800 transition-all text-center"
+            className="w-full inline-flex items-center justify-center rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-3 text-sm font-bold text-white transition-all text-center"
           >
             Back to Student Profile
           </Link>
@@ -122,8 +123,8 @@ export default function StudentAssessmentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6">
-      <div className="mx-auto max-w-2xl">
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div>
         <div className="mb-6">
           <Link
             href="/student/profile"
