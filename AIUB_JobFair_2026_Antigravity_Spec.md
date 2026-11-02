@@ -137,20 +137,19 @@ Status: the owner answered on 2 Nov 2026. Rows marked **CONFIRMED** are decided;
 
 | Layer | Choice | Why |
 |---|---|---|
-| Backend | **ASP.NET Core Web API**, latest **LTS** .NET (verify current LTS, expected .NET 10) | Senior's choice; strong fit for a university .NET ecosystem; free & open source SDK (MIT). |
-| Frontend | **Next.js** (App Router) + **TypeScript** + Tailwind CSS + shadcn/ui + React Hook Form + Zod + TanStack Query | Fast to build good mobile UI. Build with `output: "standalone"` for Docker. |
-| Database | **PostgreSQL** (default). **SQL Server supported via config switch** | Free everywhere; AIUB may prefer MSSQL, so both must work (5.4). |
-| ORM | **EF Core** (Npgsql provider + SqlServer provider) | |
-| Pattern | **Thin Repository + Unit of Work** (6.3) | Senior's requirement. |
-| Realtime | **SignalR** (optional, Phase 3) | Employer notifications of new applications, admin live counters. Must degrade gracefully (polling) if WebSockets are unavailable. |
-| Auth | **ASP.NET Core Identity**; short-lived JWT in **httpOnly cookie** + refresh token; roles `Student`, `Employer`, `Admin` | No third-party auth vendor lock-in. |
-| API contract | OpenAPI (built-in `Microsoft.AspNetCore.OpenApi` or Swashbuckle) → generated TypeScript client | Keeps frontend/backend in sync. |
-| Validation | **FluentValidation** (Apache-2.0) on backend, Zod on frontend | |
-| Logging | **Serilog** → console (12-factor) | |
-| Tests | xUnit + Testcontainers (Postgres & SQL Server in CI) + Playwright (few smoke e2e) | |
-| Containers | **Docker** + docker-compose | The portability backbone. |
-| CI/CD | **GitHub Actions** → build/test → push images to GHCR | Free. |
-| Reverse proxy (VPS) | **Caddy** (automatic HTTPS) | Simple for AIUB IT. |
+| Full-Stack Engine (Frontend & Backend) | **Next.js (App Router) + TypeScript + Node.js LTS** | **Updated by Owner Request (2 Nov 2026)**: Both frontend and backend unified in Next.js. Single runtime, TypeScript end-to-end, API Route Handlers under `/app/api/...`, fast development velocity, instant zero-config deployment on Vercel/Netlify or Docker container. |
+| Styling & UI | **Tailwind CSS + Lucide Icons + React Hook Form + Zod** | Fast to build mobile-first 360px-wide responsive screens with accessible form feedback. |
+| Database | **PostgreSQL** (default, Neon / Docker). **Switchable to SQL Server / SQLite** | Free on Neon, robust relational model, portable across any server or cloud. |
+| ORM | **Prisma ORM** (with PostgreSQL / SQL Server support) | Type-safe queries, automated migrations, zero boilerplate. |
+| Pattern | **Service Layer + Domain Services** | Clean separation of business logic (`authService`, `studentService`, `companyService`, `jobService`, `assessmentService`, `adminService`). |
+| Auth | **Custom JWT in httpOnly Secure Cookie + Refresh Token**; roles `Student`, `Employer`, `Admin` | Zero vendor lock-in; works identically across local dev, Vercel/Netlify, and self-hosted VPS. |
+| API Contract | RESTful Route Handlers under `/app/api/v1/...` with Zod schema validation | Type-safe shared contracts between client and server. |
+| Validation | **Zod** on both client and server | Single source of validation truth. |
+| Logging | Structured JSON console logging (12-factor) | Standard for cloud container logging. |
+| Tests | **Vitest / Jest + Playwright** automated tests | Fast execution and automated CI verification. |
+| Containers | **Docker** (Next.js standalone multi-stage build) + docker-compose | The portability backbone. Single unified container for web and API. |
+| CI/CD | **GitHub Actions** → build, test, and typecheck | Free and automated. |
+| Reverse proxy (VPS) | **Caddy** (automatic HTTPS) | Simple single-service reverse proxy for VPS deployment. |
 
 **Licensing caution (verify at the time):** do NOT use libraries that moved to commercial/paid licenses, e.g. **MediatR, AutoMapper, FluentAssertions 8+**. Use plain services, manual mapping or **Mapperly** (source generator), and xUnit's native asserts or Shouldly. Check the license of every new package before adding it.
 
@@ -189,32 +188,43 @@ The code must run unchanged on a free host, Contabo, AWS, Azure or an on-prem se
 ### 6.1 Repo layout (monorepo)
 ```
 /apps
-  /web                      Next.js app
-  /api
+  /web                      Full-stack Next.js app (App Router + Route Handlers)
     /src
-      Domain                entities, enums, domain rules (no dependencies)
-      Application           use-cases/services, DTOs, validators, interfaces (IRepository, IFileStorage, IEmailSender…)
-      Infrastructure        EF Core DbContext, repositories, storage, email, identity
-      Infrastructure.Migrations.PostgreSql
-      Infrastructure.Migrations.SqlServer
-      Api                   controllers/minimal endpoints, SignalR hubs, middleware, Program.cs
-    /tests
+      /app
+        /api/v1             REST API Route Handlers (Auth, Lookups, Students, Employers, Jobs, Admin, Health)
+        /register           Student and Employer registration pages
+        /login              Unified authentication page
+        /student            Profile builder, applications, CV upload
+        /employer           Dashboard, job creation, applicant review
+        /jobs               Public job browse and search
+        /companies          Participating companies directory
+        /admin              Approvals, stats, exports, event settings
+      /lib
+        /db                 Prisma Client & database connection
+        /services           Domain services (Auth, Student, Employer, Job, Assessment, Admin, Email, Storage)
+        /validations        Zod validation schemas (shared client/server)
+        /auth               JWT signing, verification, and cookie helpers
+    prisma/
+      schema.prisma         Declarative schema (PostgreSQL / SQL Server)
 /deploy
-  docker-compose.yml
-  docker-compose.prod.yml
+  docker-compose.yml        Local development compose (web + postgres)
+  docker-compose.prod.yml   Production single-VPS stack with Caddy
   Caddyfile
   scripts (backup.sh, restore.sh)
 /docs
-  guides/                   prerequisite tutorials (Section 12)
+  guides/                   Prerequisite tutorials (Section 12)
   ARCHITECTURE.md  DEPLOYMENT.md  DEPENDENCIES.md  DECISIONS.md  ADMIN_GUIDE.md  RUNBOOK.md
 .github/workflows
 .env.example
 README.md  CHANGELOG.md
 ```
 
-### 6.2 Backend rules
-- Clean/layered architecture, dependencies point inward. No MediatR; plain application services (`StudentService`, `JobService`, …).
-- Return RFC 7807 `ProblemDetails` for errors; global exception middleware.
+### 6.2 Full-Stack Next.js architecture rules
+- Service-based modular design: API route handlers validate input with Zod, then delegate to reusable services in `src/lib/services/`.
+- Uniform JSON error format (`{ "title": "...", "status": 400, "errors": [...] }`) matching RFC 7807 principles.
+- Pagination on every list endpoint; never return unbounded lists.
+- Authorization: role verification (`Student`, `Employer`, `Admin`) and resource ownership checks.
+- Zero client-side leaking of secrets; database and JWT secrets stay strictly in server-side route handlers.
 - Pagination on every list endpoint; never return unbounded lists.
 - Authorization via policies; resource checks (an employer can only touch their own jobs/applicants).
 - Background work (sending emails) via a `Channel<T>`-based hosted service with retry — no paid job library.

@@ -15,7 +15,6 @@ services:
       - caddy_config:/config
     depends_on:
       - web
-      - api
 
   postgres:
     image: postgres:16-alpine
@@ -33,30 +32,23 @@ services:
       timeout: 5s
       retries: 5
 
-  api:
-    image: ${API_IMAGE:-ghcr.io/aiub-club/aiub-jobfair-api:latest}
-    container_name: aiub_api_prod
-    restart: always
-    environment:
-      ASPNETCORE_ENVIRONMENT: Production
-      Database__Provider: ${DATABASE_PROVIDER:-PostgreSql}
-      ConnectionStrings__Default: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
-      Cors__AllowedOrigins__0: "https://${DOMAIN}"
-    depends_on:
-      postgres:
-        condition: service_healthy
-
   web:
     image: ${WEB_IMAGE:-ghcr.io/aiub-club/aiub-jobfair-web:latest}
     container_name: aiub_web_prod
     restart: always
     environment:
       NODE_ENV: production
-      API_INTERNAL_URL: http://api:5000
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public"
+      JWT_SECRET: ${JWT_SECRET}
+      NEXTAUTH_URL: "https://${DOMAIN}"
+    volumes:
+      - web_prod_uploads:/app/uploads
     depends_on:
-      - api
+      postgres:
+        condition: service_healthy
 
 volumes:
   postgres_prod_data:
+  web_prod_uploads:
   caddy_data:
   caddy_config:

@@ -1,0 +1,398 @@
+// Prisma Schema for AIUB Job Fair 2026
+// Matches Spec Section 7 exactly
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  EMPLOYER
+  ADMIN
+}
+
+enum JobType {
+  FULL_TIME
+  INTERNSHIP
+}
+
+enum StudyLevel {
+  ONGOING
+  GRADUATED
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum WorkplaceType {
+  OFFICE
+  REMOTE
+  ONLINE
+}
+
+enum EmploymentStatus {
+  FULL_TIME
+  PART_TIME
+  CONTRACTUAL
+  INTERNSHIP
+}
+
+enum PostType {
+  OPENING
+  CANDIDATE_CRITERIA
+}
+
+enum JobPostStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+}
+
+enum JoiningOption {
+  IMMEDIATELY
+  WITHIN_1_WEEK
+  WITHIN_15_DAYS
+  WITHIN_1_MONTH
+}
+
+enum ApplicationStatus {
+  SUBMITTED
+  VIEWED
+  SHORTLISTED
+  REJECTED
+}
+
+enum EducationLevel {
+  SSC
+  HSC
+  BSC
+  MSC1
+  MSC2
+  PROFESSIONAL
+}
+
+enum ReferenceRelation {
+  RELATIVE
+  FAMILY_FRIEND
+  ACADEMIC
+  PROFESSIONAL
+}
+
+enum FileKind {
+  CV
+  PHOTO
+  LOGO
+}
+
+model User {
+  id             String          @id @default(uuid())
+  email          String          @unique
+  passwordHash   String
+  role           Role            @default(STUDENT)
+  emailConfirmed Boolean         @default(false)
+  isActive       Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  studentProfile StudentProfile?
+  company        Company?
+}
+
+model VerificationToken {
+  id        String   @id @default(uuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model StudentProfile {
+  id                  String                      @id @default(uuid())
+  userId              String                      @unique
+  user                User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName            String
+  aiubId              String                      @unique
+  mobile              String
+  gender              String?
+  address             String?
+  profilePhotoFileId  String?
+  preferredJobType    JobType                     @default(FULL_TIME)
+  studyLevel          StudyLevel                  @default(ONGOING)
+  linkedInUrl         String?
+  gitHubUrl           String?
+  extracurricularText String?
+  defaultCvFileId     String?
+  attendsSeminar      Boolean                     @default(false)
+  consentAcceptedAt   DateTime?
+  createdAt           DateTime                    @default(now())
+  updatedAt           DateTime                    @updatedAt
+
+  preferredIndustries StudentPreferredIndustry[]
+  educations          EducationRecord[]
+  experiences         ExperienceRecord[]
+  references          ReferenceRecord[]
+  applications        Application[]
+  seminarRegistrations SeminarRegistration[]
+  assessmentAttempts  AssessmentAttempt[]
+}
+
+model Industry {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+
+  preferredByStudents StudentPreferredIndustry[]
+  companies           Company[]
+  experiences         ExperienceRecord[]
+}
+
+model StudentPreferredIndustry {
+  studentId  String
+  industryId String
+  student    StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  industry   Industry       @relation(fields: [industryId], references: [id], onDelete: Cascade)
+
+  @@id([studentId, industryId])
+}
+
+model Company {
+  id                    String         @id @default(uuid())
+  ownerUserId           String         @unique
+  ownerUser             User           @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  name                  String
+  normalizedName        String
+  websiteUrl            String?
+  industryId            String
+  industry              Industry       @relation(fields: [industryId], references: [id])
+  logoFileId            String?
+  shortIntro            String
+  about                 String?
+  hrName                String
+  hrEmail               String
+  hrMobile              String
+  approvalStatus        ApprovalStatus @default(PENDING)
+  rejectionReason       String?
+  registrationCompleted Boolean        @default(false)
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  jobPosts JobPost[]
+
+  @@index([normalizedName])
+}
+
+model EducationRecord {
+  id              String         @id @default(uuid())
+  studentId       String
+  student         StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  level           EducationLevel
+  institutionName String
+  cgpa            Decimal?       @db.Decimal(3, 2)
+  subject         String?
+  passingYear     Int?
+  notes           String?
+}
+
+model ExperienceRecord {
+  id               String           @id @default(uuid())
+  studentId        String
+  student          StudentProfile   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  companyName      String
+  industryId       String?
+  industry         Industry?        @relation(fields: [industryId], references: [id])
+  jobType          EmploymentStatus @default(FULL_TIME)
+  designation      String
+  startDate        DateTime
+  endDate          DateTime?
+  isContinuous     Boolean          @default(false)
+  responsibilities String?
+}
+
+model ReferenceRecord {
+  id           String            @id @default(uuid())
+  studentId    String
+  student      StudentProfile    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  name         String
+  designation  String
+  organization String
+  email        String
+  mobile       String
+  relation     ReferenceRelation @default(PROFESSIONAL)
+}
+
+model JobPost {
+  id                     String           @id @default(uuid())
+  companyId              String
+  company                Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  postType               PostType         @default(OPENING)
+  positionName           String
+  location               String           @default("Dhaka")
+  workplace              WorkplaceType    @default(OFFICE)
+  educationRequirement   String?
+  additionalRequirements String?
+  responsibilities       String?
+  skillsAndExpertise     String?
+  employmentStatus       EmploymentStatus @default(FULL_TIME)
+  salaryMode             String           @default("Negotiable")
+  salaryMin              Decimal?         @db.Decimal(10, 2)
+  salaryMax              Decimal?         @db.Decimal(10, 2)
+  compensationBenefits   String?          @default("As per company policy")
+  question1              String?
+  question2              String?
+  deadlineUtc            DateTime?
+  status                 JobPostStatus    @default(PUBLISHED)
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
+
+  applications Application[]
+
+  @@index([status, deadlineUtc, companyId])
+}
+
+model Application {
+  id            String            @id @default(uuid())
+  studentId     String
+  student       StudentProfile    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  jobPostId     String?
+  jobPost       JobPost?          @relation(fields: [jobPostId], references: [id], onDelete: Cascade)
+  cvFileId      String
+  joiningOption JoiningOption     @default(IMMEDIATELY)
+  answer1       String?
+  answer2       String?
+  status        ApplicationStatus @default(SUBMITTED)
+  submittedAt   DateTime          @default(now())
+
+  @@index([studentId, jobPostId])
+}
+
+model Seminar {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  startsAtUtc DateTime
+  venue       String   @default("AIUB Campus")
+  capacity    Int?
+  isActive    Boolean  @default(true)
+
+  registrations SeminarRegistration[]
+}
+
+model SeminarRegistration {
+  id           String         @id @default(uuid())
+  seminarId    String
+  seminar      Seminar        @relation(fields: [seminarId], references: [id], onDelete: Cascade)
+  studentId    String
+  student      StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  registeredAt DateTime       @default(now())
+
+  @@unique([seminarId, studentId])
+}
+
+model FileAsset {
+  id           String   @id @default(uuid())
+  storageKey   String   @unique
+  originalName String
+  contentType  String
+  sizeBytes    BigInt
+  kind         FileKind
+  ownerUserId  String
+  createdAt    DateTime @default(now())
+}
+
+model AssessmentSet {
+  id         String   @id @default(uuid())
+  name       String
+  version    Int      @default(1)
+  sourceNote String?
+  isActive   Boolean  @default(true)
+
+  questions AssessmentQuestion[]
+  bands     AssessmentBand[]
+  attempts  AssessmentAttempt[]
+}
+
+model AssessmentQuestion {
+  id            String        @id @default(uuid())
+  setId         String
+  set           AssessmentSet @relation(fields: [setId], references: [id], onDelete: Cascade)
+  text          String
+  category      String
+  type          String        @default("Likert")
+  isReverseKeyed Boolean      @default(false)
+  isActive      Boolean       @default(true)
+  sortOrder     Int           @default(0)
+
+  options AssessmentOption[]
+  answers AssessmentAnswer[]
+}
+
+model AssessmentOption {
+  id         String             @id @default(uuid())
+  questionId String
+  question   AssessmentQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  text       String
+  value      Int
+}
+
+model AssessmentBand {
+  id       String        @id @default(uuid())
+  setId    String
+  set      AssessmentSet @relation(fields: [setId], references: [id], onDelete: Cascade)
+  category String
+  minScore Int
+  maxScore Int
+  label    String
+}
+
+model AssessmentAttempt {
+  id          String         @id @default(uuid())
+  studentId   String
+  student     StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  setId       String
+  set         AssessmentSet  @relation(fields: [setId], references: [id], onDelete: Cascade)
+  startedAt   DateTime       @default(now())
+  completedAt DateTime?
+  consentAt   DateTime?
+
+  answers AssessmentAnswer[]
+  results AssessmentResult[]
+
+  @@index([studentId, setId])
+}
+
+model AssessmentAnswer {
+  id         String             @id @default(uuid())
+  attemptId  String
+  attempt    AssessmentAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId String
+  question   AssessmentQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  value      Int
+
+  @@unique([attemptId, questionId])
+}
+
+model AssessmentResult {
+  id        String            @id @default(uuid())
+  attemptId String
+  attempt   AssessmentAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  category  String
+  score     Decimal           @db.Decimal(5, 2)
+  band      String
+}
+
+model EventSetting {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       String
+  description String?
+  updatedAt   DateTime @default(now()) @updatedAt
+}

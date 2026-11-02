@@ -42,3 +42,16 @@
 * **Date:** 2 November 2026
 * **Status:** CONFIRMED default
 * **Decision:** Student registration demographic options will provide: `Male`, `Female`, `Prefer not to say` (optional).
+
+
+---
+
+## Decision 05: Full-Stack Next.js Unification (Frontend + Backend)
+* **Date:** 2 November 2026
+* **Status:** CONFIRMED by project owner
+* **Context:** The owner requested that both the frontend and backend be built within Next.js.
+* **Decision:**
+  * Build the platform as a unified full-stack Next.js application (App Router) with route handlers (`src/app/api/...`).
+  * Use Prisma ORM for type-safe database queries and migrations against PostgreSQL (default on Neon/Docker) with support for SQL Server.
+  * Use custom JWT in `httpOnly` secure cookies with bcrypt password hashing and Zod validation.
+  * Single deployment container (`output: "standalone"`), streamlining Vercel/Netlify deployment and Docker production hosting.

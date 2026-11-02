@@ -11,21 +11,7 @@
         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
     }
 
-    # API and Health endpoints route directly to backend API
-    handle /api/* {
-        reverse_proxy api:5000
-    }
-
-    handle /health/* {
-        reverse_proxy api:5000
-    }
-
-    # SignalR notifications hub
-    handle /hubs/* {
-        reverse_proxy api:5000
-    }
-
-    # Frontend Next.js web application
+    # Fullstack Next.js app (SSR, Pages, and API Route Handlers)
     handle /* {
         reverse_proxy web:3000
     }

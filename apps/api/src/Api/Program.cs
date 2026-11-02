@@ -1,6 +1,12 @@
+using AIUB.JobFair.Api.Endpoints;
 using AIUB.JobFair.Api.Middleware;
+using AIUB.JobFair.Application;
+using AIUB.JobFair.Infrastructure;
+using AIUB.JobFair.Infrastructure.Identity;
 using AIUB.JobFair.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
 
@@ -20,8 +26,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
-// Database configuration (PostgreSql by default, switchable to SqlServer)
-builder.Services.AddConfiguredDatabase(builder.Configuration);
+// Application and Infrastructure layers
+builder.Services.AddApplicationServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
 // Health checks
 builder.Services.AddHealthChecks()
@@ -53,6 +60,31 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Auto-migrate & seed database on startup
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+        var userManager = services.GetRequiredService<UserManager<AppUser>>();
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+        var config = services.GetRequiredService<IConfiguration>();
+
+        // Ensure database created
+        if (context.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
+        {
+            await context.Database.EnsureCreatedAsync();
+        }
+        await DbSeeder.SeedAsync(context, userManager, roleManager, config, logger);
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred during database migration/seeding: {Message}", ex.Message);
+    }
+}
+
 // Global Exception Handling & Logging
 app.UseExceptionHandler();
 app.UseSerilogRequestLogging();
@@ -64,10 +96,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("DefaultCorsPolicy");
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 // Health Check Endpoints (Section 5.6)
 app.MapHealthChecks("/health/live", new HealthCheckOptions
 {
-    Predicate = _ => false, // Liveness check just confirms the process is alive
+    Predicate = _ => false,
     ResponseWriter = async (context, _) =>
     {
         context.Response.ContentType = "application/json";
@@ -99,12 +134,12 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions
     }
 });
 
-// System Info Endpoint
+// Map Endpoints
 app.MapGet("/api/v1/info", () => Results.Ok(new
 {
     eventTitle = "AIUB Job Fair 2026",
     tagline = "Let's Build Your Future Together",
-    version = "1.0.0-phase0",
+    version = "1.0.0-phase1",
     status = "Operational",
     serverTimeUtc = DateTime.UtcNow,
     documentation = "/openapi/v1.json"
@@ -112,7 +147,10 @@ app.MapGet("/api/v1/info", () => Results.Ok(new
 .WithName("GetSystemInfo")
 .WithTags("System");
 
+app.MapGroup("/api/v1/auth").MapAuthEndpoints().WithTags("Auth");
+app.MapGroup("/api/v1/lookups").MapLookupEndpoints().WithTags("Lookups");
+app.MapGroup("/api/v1/admin").MapAdminEndpoints().WithTags("Admin");
+
 app.Run();
 
-// Required for WebApplicationFactory in tests
 public partial class Program { }

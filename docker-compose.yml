@@ -17,23 +17,6 @@ services:
       timeout: 5s
       retries: 5
 
-  api:
-    build:
-      context: ./apps/api
-      dockerfile: Dockerfile
-    container_name: aiub_api
-    restart: unless-stopped
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      Database__Provider: PostgreSql
-      ConnectionStrings__Default: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-aiub_jobfair};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-postgres}"
-      Cors__AllowedOrigins__0: "http://localhost:3000"
-    ports:
-      - "5000:5000"
-    depends_on:
-      postgres:
-        condition: service_healthy
-
   web:
     build:
       context: ./apps/web
@@ -42,11 +25,17 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: production
-      API_INTERNAL_URL: http://api:5000
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-aiub_jobfair}?schema=public"
+      JWT_SECRET: ${JWT_SECRET:-super-secret-jwt-key-for-aiub-job-fair-2026-min-32-chars}
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
     ports:
       - "3000:3000"
+    volumes:
+      - web_uploads:/app/uploads
     depends_on:
-      - api
+      postgres:
+        condition: service_healthy
 
 volumes:
   postgres_data:
+  web_uploads:
