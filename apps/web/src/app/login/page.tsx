@@ -31,13 +31,13 @@ export default function LoginPage() {
 
       const role = data.user.role;
       if (role === "STUDENT") {
-        router.push("/student/profile");
+        window.location.href = "/student/profile";
       } else if (role === "EMPLOYER") {
-        router.push("/employer/dashboard");
+        window.location.href = "/employer/dashboard";
       } else if (role === "ADMIN") {
-        router.push("/admin");
+        window.location.href = "/admin";
       } else {
-        router.push("/");
+        window.location.href = "/";
       }
     } catch (err: any) {
       setError(err.message);

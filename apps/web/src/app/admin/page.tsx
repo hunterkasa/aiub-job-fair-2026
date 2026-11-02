@@ -94,12 +94,13 @@ export default function AdminDashboardPage() {
       setLoading(true);
       const userRes = await fetch("/api/v1/auth/me");
       if (!userRes.ok) {
-        router.push("/login");
+        window.location.href = "/login";
         return;
       }
       const userData = await userRes.json();
-      if (userData?.user?.role !== "ADMIN") {
-        router.push("/login");
+      const role = userData?.user?.role || userData?.role;
+      if (role !== "ADMIN") {
+        window.location.href = "/login";
         return;
       }
 

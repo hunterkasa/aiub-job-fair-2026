@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
         email: hrEmail.toLowerCase(),
         passwordHash,
         role: "EMPLOYER",
-        emailConfirmed: false,
+        emailConfirmed: true,
         isActive: true,
         company: {
           create: {
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
             hrName,
             hrEmail: hrEmail.toLowerCase(),
             hrMobile,
-            approvalStatus: "PENDING",
+            approvalStatus: "APPROVED",
             registrationCompleted: true,
           },
         },
